@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 public class MainActivity extends FragmentActivity {
 
-    private FragmentManager fragmentManager;
+    private FragmentManager currentManager;
     private Fragment currentFragment;
 
     @Override
@@ -16,18 +16,19 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.main_container, new HomeFragment()).commit();
+        currentFragment = new HomeFragment();
+        currentManager = getFragmentManager();
+        currentManager.beginTransaction().add(R.id.main_container, currentFragment).commit();
 
     }
 
-    @Override
-    public FragmentManager getFragmentManager() {
-        return fragmentManager;
+
+    public FragmentManager getCurrentManager() {
+        return currentManager;
     }
 
     public void setFragmentManager(FragmentManager fragmentManager) {
-        this.fragmentManager = fragmentManager;
+        this.currentManager = fragmentManager;
     }
 
     public Fragment getCurrentFragment() {

@@ -7,16 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-public class InstructionFragment extends Fragment {
 
-    private ImageButton startButton;
+public class PulseFragment extends Fragment {
+
+
+    private ImageButton arrowButton;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View homeView = inflater.inflate(R.layout.fragment_instruction, container, false);
-        startButton = (ImageButton) homeView.findViewById(R.id.start_button);
-        startButton.setOnClickListener(new View.OnClickListener() {
+        View homeView = inflater.inflate(R.layout.fragment_pulse, container, false);
+        arrowButton = (ImageButton) homeView.findViewById(R.id.start_button);
+        arrowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseFragment());

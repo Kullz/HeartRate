@@ -20,7 +20,8 @@ public class HomeFragment extends Fragment {
         arrowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new InstructionFragment());
+                ((MainActivity)getActivity()).setCurrentFragment(new InstructionFragment());
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, ((MainActivity)getActivity()).getCurrentFragment()).commit();
             }
         });
 

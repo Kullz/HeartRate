@@ -14,12 +14,13 @@ public class InstructionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View homeView = inflater.inflate(R.layout.fragment_instruction, container, false);
+        View homeView = (View)inflater.inflate(R.layout.fragment_instruction, container, false);
         startButton = (ImageButton) homeView.findViewById(R.id.start_button);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseFragment());
+                ((MainActivity)getActivity()).setCurrentFragment(new PulseFragment());
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, ((MainActivity)getActivity()).getCurrentFragment()).commit();
             }
         });
 

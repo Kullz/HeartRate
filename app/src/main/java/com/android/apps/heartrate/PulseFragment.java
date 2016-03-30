@@ -11,19 +11,19 @@ import android.widget.ImageButton;
 public class PulseFragment extends Fragment {
 
 
-    private ImageButton arrowButton;
+    //private ImageButton arrowButton;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View homeView = inflater.inflate(R.layout.fragment_pulse, container, false);
-        arrowButton = (ImageButton) homeView.findViewById(R.id.start_button);
-        arrowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseFragment());
-            }
-        });
+//        arrowButton = (ImageButton) homeView.findViewById(R.id.start_button);
+//        arrowButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseFragment());
+//            }
+//        });
 
         return homeView;
     }

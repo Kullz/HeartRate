@@ -14,8 +14,8 @@ public class InstructionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View homeView = inflater.inflate(R.layout.fragment_instruction, container, false);
-        startButton = (ImageButton) homeView.findViewById(R.id.start_button);
+        View instructionView = inflater.inflate(R.layout.fragment_instruction, container, false);
+        startButton = (ImageButton) instructionView.findViewById(R.id.start_button);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -23,7 +23,7 @@ public class InstructionFragment extends Fragment {
             }
         });
 
-        return homeView;
+        return instructionView;
     }
 
 }

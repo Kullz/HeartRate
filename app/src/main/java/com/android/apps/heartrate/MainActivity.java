@@ -9,14 +9,14 @@ import android.os.Bundle;
 public class MainActivity extends FragmentActivity {
 
     private FragmentManager currentManager;
-    private Fragment currentFragment;
+    public static Fragment currentFragment = new HomeFragment();
+    public MainActivity mMainActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        currentFragment = new HomeFragment();
         currentManager = getFragmentManager();
         currentManager.beginTransaction().add(R.id.main_container, currentFragment).commit();
 
@@ -38,4 +38,5 @@ public class MainActivity extends FragmentActivity {
     public void setCurrentFragment(Fragment currentFragment) {
         this.currentFragment = currentFragment;
     }
+
 }

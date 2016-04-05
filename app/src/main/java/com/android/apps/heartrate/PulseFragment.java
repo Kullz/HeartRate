@@ -1,33 +1,54 @@
 package com.android.apps.heartrate;
 
-import android.app.Fragment;
-import android.hardware.Camera;
-import android.media.Image;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.hardware.Camera;
+import android.hardware.Camera.PreviewCallback;
+import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.widget.TextView;
 
-public class PulseFragment extends Fragment {
 
+/**
+ * This class extends Activity to handle a picture preview, process the preview
+ * for a red values and determine a heart beat.
+ *
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
+public class PulseFragment extends Activity {
+
+    private static final String TAG = "PulseFragment";
     private static final AtomicBoolean processing = new AtomicBoolean(false);
+
+    private static SurfaceView preview = null;
+    private static SurfaceHolder previewHolder = null;
+    private static Camera camera = null;
+    private static View image = null;
+    private static TextView text = null;
+
+    private static WakeLock wakeLock = null;
 
     private static int averageIndex = 0;
     private static final int averageArraySize = 4;
     private static final int[] averageArray = new int[averageArraySize];
 
-    public static enum TYPE{
+    public static enum TYPE {
         GREEN, RED
     };
 
     private static TYPE currentType = TYPE.GREEN;
 
-    public static TYPE getCurrentType() {return currentType;}
+    public static TYPE getCurrent() {
+        return currentType;
+    }
 
     private static int beatsIndex = 0;
     private static final int beatsArraySize = 3;
@@ -35,57 +56,90 @@ public class PulseFragment extends Fragment {
     private static double beats = 0;
     private static long startTime = 0;
 
-    private ImageButton arrowButton;
-    private static TextView text;
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pulse);
 
-        View homeView = inflater.inflate(R.layout.fragment_pulse, container, false);
-        text = (TextView) homeView.findViewById(R.id.text);
-        Camera cam = Camera.open();
-        startTime = System.currentTimeMillis();
-        cam.release();
+        preview = (SurfaceView) findViewById(R.id.preview);
+        previewHolder = preview.getHolder();
+        previewHolder.addCallback(surfaceCallback);
+        previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
+        image = findViewById(R.id.image);
+        text = (TextView) findViewById(R.id.text);
 
-//        arrowButton = (ImageButton) homeView.findViewById(R.id.start_button);
-//        arrowButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseFragment());
-//            }
-//        });
-
-        return homeView;
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
     }
 
-    private static Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        wakeLock.acquire();
+
+        camera = Camera.open();
+
+        startTime = System.currentTimeMillis();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        wakeLock.release();
+
+        camera.setPreviewCallback(null);
+        camera.stopPreview();
+        camera.release();
+        camera = null;
+    }
+
+    private static PreviewCallback previewCallback = new PreviewCallback() {
+
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public void onPreviewFrame(byte[] data, Camera camera) {
+        public void onPreviewFrame(byte[] data, Camera cam) {
+            if (data == null) throw new NullPointerException();
+            Camera.Size size = cam.getParameters().getPreviewSize();
+            if (size == null) throw new NullPointerException();
 
-            if(data == null) throw new NullPointerException();
-
-            Camera.Size size = camera.getParameters().getPreviewSize();
-
-            if(size == null) throw new NullPointerException();
-
-            AtomicBoolean processing = new AtomicBoolean(false);
-
-            if(!processing.compareAndSet(false, true)) return;
+            if (!processing.compareAndSet(false, true)) return;
 
             int width = size.width;
             int height = size.height;
 
             int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width);
-
-            if(imgAvg == 0 || imgAvg == 256){ processing.set(false); return; }
+            // Log.i(TAG, "imgAvg="+imgAvg);
+            if (imgAvg == 0 || imgAvg == 255) {
+                processing.set(false);
+                return;
+            }
 
             int averageArrayAvg = 0;
             int averageArrayCnt = 0;
-
-            for(int i = 0; i < averageArray.length; i++){
-                if(averageArray[i] > 0){
+            for (int i = 0; i < averageArray.length; i++) {
+                if (averageArray[i] > 0) {
                     averageArrayAvg += averageArray[i];
                     averageArrayCnt++;
                 }
@@ -93,55 +147,117 @@ public class PulseFragment extends Fragment {
 
             int rollingAverage = (averageArrayCnt > 0) ? (averageArrayAvg / averageArrayCnt) : 0;
             TYPE newType = currentType;
-            if(imgAvg < rollingAverage){
+            if (imgAvg < rollingAverage) {
                 newType = TYPE.RED;
-                if(newType != currentType) {beats++;}
-                else if(imgAvg > rollingAverage){ newType = TYPE.GREEN;}
+                if (newType != currentType) {
+                    beats++;
+                    // Log.d(TAG, "BEAT!! beats="+beats);
+                }
+            } else if (imgAvg > rollingAverage) {
+                newType = TYPE.GREEN;
             }
 
-            if(averageIndex == averageArraySize) averageIndex = 0;
+            if (averageIndex == averageArraySize) averageIndex = 0;
             averageArray[averageIndex] = imgAvg;
             averageIndex++;
 
-            if(newType != currentType){ currentType = newType;}
+            // Transitioned from one state to another to the same
+            if (newType != currentType) {
+                currentType = newType;
+            }
 
             long endTime = System.currentTimeMillis();
-            double totalTimeInSecs = (endTime - startTime)/1000d;
-            if(totalTimeInSecs >= 10){
+            double totalTimeInSecs = (endTime - startTime) / 1000d;
+            if (totalTimeInSecs >= 10) {
                 double bps = (beats / totalTimeInSecs);
                 int dpm = (int) (bps * 60d);
-
-                if(dpm < 30 || dpm > 180){
+                if (dpm < 30 || dpm > 180) {
                     startTime = System.currentTimeMillis();
                     beats = 0;
                     processing.set(false);
                     return;
                 }
 
-                if(beatsIndex == beatsArraySize) beatsIndex = 0;
+                // Log.d(TAG,
+                // "totalTimeInSecs="+totalTimeInSecs+" beats="+beats);
+
+                if (beatsIndex == beatsArraySize) beatsIndex = 0;
                 beatsArray[beatsIndex] = dpm;
                 beatsIndex++;
 
                 int beatsArrayAvg = 0;
                 int beatsArrayCnt = 0;
-
-                for(int i = 0; i < beatsArray.length; i++){
-                    if(beatsArray[i] > 0){
+                for (int i = 0; i < beatsArray.length; i++) {
+                    if (beatsArray[i] > 0) {
                         beatsArrayAvg += beatsArray[i];
                         beatsArrayCnt++;
                     }
                 }
-
                 int beatsAvg = (beatsArrayAvg / beatsArrayCnt);
                 text.setText(String.valueOf(beatsAvg));
                 startTime = System.currentTimeMillis();
                 beats = 0;
-
             }
             processing.set(false);
-
-
         }
     };
 
+    private static SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            try {
+                camera.setPreviewDisplay(previewHolder);
+                camera.setPreviewCallback(previewCallback);
+            } catch (Throwable t) {
+                Log.e("PreviewDemo-surface", "Exception in setPreviewDisplay()", t);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            Camera.Size size = getSmallestPreviewSize(width, height, parameters);
+            if (size != null) {
+                parameters.setPreviewSize(size.width, size.height);
+                Log.d(TAG, "Using width=" + size.width + " height=" + size.height);
+            }
+            camera.setParameters(parameters);
+            camera.startPreview();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            // Ignore
+        }
+    };
+
+    private static Camera.Size getSmallestPreviewSize(int width, int height, Camera.Parameters parameters) {
+        Camera.Size result = null;
+
+        for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
+            if (size.width <= width && size.height <= height) {
+                if (result == null) {
+                    result = size;
+                } else {
+                    int resultArea = result.width * result.height;
+                    int newArea = size.width * size.height;
+
+                    if (newArea < resultArea) result = size;
+                }
+            }
+        }
+
+        return result;
+    }
 }

@@ -1,6 +1,7 @@
 package com.android.apps.heartrate;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ public class InstructionFragment extends Fragment {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseFragment());
+                startActivity(new Intent(getActivity(), PulseFragment.class));
             }
         });
 

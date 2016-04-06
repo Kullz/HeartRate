@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
@@ -14,18 +15,18 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
-/**
- * This class extends Activity to handle a picture preview, process the preview
- * for a red values and determine a heart beat.
- *
- * @author Justin Wetherell <phishman3579@gmail.com>
- */
-public class PulseFragment extends Activity {
 
-    private static final String TAG = "PulseFragment";
+public class PulseActivity extends Activity{
+
+    private static final String TAG = "PulseActivity";
     private static final AtomicBoolean processing = new AtomicBoolean(false);
 
     private static SurfaceView preview = null;
@@ -55,6 +56,12 @@ public class PulseFragment extends Activity {
     private static final int[] beatsArray = new int[beatsArraySize];
     private static double beats = 0;
     private static long startTime = 0;
+    private static int beatsAvg = 0;
+
+    private static ImageView heart;
+    private static Animation pulsation;
+    private static TextView marker;
+    private static ImageButton next;
 
     /**
      * {@inheritDoc}
@@ -69,8 +76,19 @@ public class PulseFragment extends Activity {
         previewHolder.addCallback(surfaceCallback);
         previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        image = findViewById(R.id.image);
-        text = (TextView) findViewById(R.id.text);
+        marker = (TextView) findViewById(R.id.marker);
+        heart = (ImageView) findViewById(R.id.heart);
+        pulsation = AnimationUtils.loadAnimation(this, R.anim.pulsation);
+        next = (ImageButton) findViewById(R.id.pulse_next);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent processing = new Intent(PulseActivity.this, ProcessingActivity.class);
+                startActivity(processing);
+                finish();
+            }
+        });
+
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
@@ -96,7 +114,11 @@ public class PulseFragment extends Activity {
         camera = Camera.open();
 
         startTime = System.currentTimeMillis();
+
+
     }
+
+
 
     /**
      * {@inheritDoc}
@@ -193,8 +215,11 @@ public class PulseFragment extends Activity {
                         beatsArrayCnt++;
                     }
                 }
-                int beatsAvg = (beatsArrayAvg / beatsArrayCnt);
-                text.setText(String.valueOf(beatsAvg));
+                beatsAvg = (beatsArrayAvg / beatsArrayCnt);
+
+                marker.setText(String.valueOf(beatsAvg));
+                pulsation.setDuration(60000 / beatsAvg);
+                heart.startAnimation(pulsation);
                 startTime = System.currentTimeMillis();
                 beats = 0;
             }

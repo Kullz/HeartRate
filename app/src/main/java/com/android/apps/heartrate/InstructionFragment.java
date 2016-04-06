@@ -20,7 +20,9 @@ public class InstructionFragment extends Fragment {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), PulseFragment.class));
+                Intent pulse = new Intent(getActivity(), PulseActivity.class);
+                startActivity(pulse);
+                getActivity().finish();
             }
         });
 

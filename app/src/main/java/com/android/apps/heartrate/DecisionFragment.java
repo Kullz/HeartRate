@@ -17,7 +17,7 @@ public class DecisionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View currentLayout = inflater.inflate(R.layout.fragment_decision, container, false);
-        final MainActivity currentActivity = (MainActivity) getActivity();
+        final ProcessingActivity currentActivity = (ProcessingActivity) getActivity();
 
         brainButton = (ImageButton) currentLayout.findViewById(R.id.brain_button);
         distillButton = (ImageButton) currentLayout.findViewById(R.id.distillation_button);
@@ -26,7 +26,7 @@ public class DecisionFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                //getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseFragment()).commit();
+                //getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseActivity()).commit();
             }
         });
 
@@ -34,8 +34,7 @@ public class DecisionFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).setCurrentFragment(new DistillationFragment());
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, ((MainActivity)getActivity()).getCurrentFragment()).commit();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.process_container, new DistillationFragment()).commit();
             }
         });
 

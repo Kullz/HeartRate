@@ -27,7 +27,9 @@ public class DistillationFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.process_container, new ThankFragment()).commit();
+                MainActivity activity = (MainActivity)getActivity();
+                activity.setCurrentFragment(new ThankFragment());
+                activity.getFragmentManager().beginTransaction().replace(R.id.main_container, activity.getCurrentFragment()).commit();
             }
         });
 

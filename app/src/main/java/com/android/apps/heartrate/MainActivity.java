@@ -39,4 +39,15 @@ public class MainActivity extends FragmentActivity {
         this.currentFragment = currentFragment;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(currentFragment instanceof DecisionFragment) {
+            currentManager.beginTransaction().replace(R.id.main_container, currentFragment).commit();
+        }else if(currentFragment instanceof CreditsFragment){
+
+            finish();
+            System.exit(0);
+        }
+    }
 }

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -58,10 +59,17 @@ public class PulseActivity extends Activity{
     private static long startTime = 0;
     private static int beatsAvg = 0;
 
+    public static int getBeats() {
+        return beatsAvg;
+    }
+
+    private static ImageButton next;
     private static ImageView heart;
     private static Animation pulsation;
-    private static TextView marker;
-    private static ImageButton next;
+
+
+
+
 
     /**
      * {@inheritDoc}
@@ -76,18 +84,40 @@ public class PulseActivity extends Activity{
         previewHolder.addCallback(surfaceCallback);
         previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        marker = (TextView) findViewById(R.id.marker);
-        heart = (ImageView) findViewById(R.id.heart);
-        pulsation = AnimationUtils.loadAnimation(this, R.anim.pulsation);
+
+        //marker = (TextView) findViewById(R.id.marker);
+
         next = (ImageButton) findViewById(R.id.pulse_next);
+        heart = (ImageView) findViewById(R.id.heart);
+
+        pulsation = AnimationUtils.loadAnimation(this, R.anim.pulsation);
+
+
+        AlphaAnimation arrowbutton = new AlphaAnimation(0.0f, 1.0f);
+        arrowbutton.setStartOffset(10000);
+        arrowbutton.setDuration(5000);
+        next.startAnimation(arrowbutton);
+
+
+
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent processing = new Intent(PulseActivity.this, ProcessingActivity.class);
-                startActivity(processing);
-                finish();
+                if(getIntent().getBooleanExtra("marker", false)){
+                    Intent i = new Intent(PulseActivity.this, MainActivity.class);
+                    startActivity(i);
+                    finish();
+                }else {
+                    Toast.makeText(PulseActivity.this, "Saved beats: " + getBeats(), Toast.LENGTH_LONG).show();
+                    Intent processing = new Intent(PulseActivity.this, MainActivity.class);
+                    processing.putExtra("beats", getBeats());
+                    startActivity(processing);
+                    finish();
+                }
             }
         });
+
+
 
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -217,9 +247,9 @@ public class PulseActivity extends Activity{
                 }
                 beatsAvg = (beatsArrayAvg / beatsArrayCnt);
 
-                marker.setText(String.valueOf(beatsAvg));
-                pulsation.setDuration(60000 / beatsAvg);
+                pulsation.setDuration(60000 / beatsArrayAvg);
                 heart.startAnimation(pulsation);
+
                 startTime = System.currentTimeMillis();
                 beats = 0;
             }

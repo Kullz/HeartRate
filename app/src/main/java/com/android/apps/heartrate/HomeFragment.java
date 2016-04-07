@@ -11,17 +11,19 @@ import android.widget.ImageButton;
 public class HomeFragment extends Fragment {
 
     private ImageButton arrowButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View homeView = inflater.inflate(R.layout.fragment_home, container, false);
+        
         arrowButton = (ImageButton) homeView.findViewById(R.id.home_arrow_button);
+
         arrowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).setCurrentFragment(new InstructionFragment());
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, ((MainActivity)getActivity()).getCurrentFragment()).commit();
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new InstructionFragment()).commit();
             }
         });
 

@@ -11,18 +11,21 @@ import android.widget.ImageButton;
 public class InstructionFragment extends Fragment {
 
     private ImageButton startButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View instructionView = inflater.inflate(R.layout.fragment_instruction, container, false);
+
         startButton = (ImageButton) instructionView.findViewById(R.id.start_button);
+
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pulse = new Intent(getActivity(), PulseActivity.class);
-                startActivity(pulse);
-                getActivity().finish();
+                Intent i = new Intent(getActivity(), PulseActivity.class);
+                ((MainActivity)getActivity()).setCurrentFragment(new DecisionFragment());
+                startActivity(i);
             }
         });
 

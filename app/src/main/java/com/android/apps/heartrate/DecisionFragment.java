@@ -1,6 +1,7 @@
 package com.android.apps.heartrate;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,6 @@ public class DecisionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View currentLayout = inflater.inflate(R.layout.fragment_decision, container, false);
-        final ProcessingActivity currentActivity = (ProcessingActivity) getActivity();
 
         brainButton = (ImageButton) currentLayout.findViewById(R.id.brain_button);
         distillButton = (ImageButton) currentLayout.findViewById(R.id.distillation_button);
@@ -25,8 +25,10 @@ public class DecisionFragment extends Fragment {
         brainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new PulseActivity()).commit();
+                ((MainActivity)getActivity()).setCurrentFragment(new ThankFragment());
+                Intent i = new Intent(getActivity(), PulseActivity.class);
+                i.putExtra("marker", true);
+                startActivity(i);
             }
         });
 
@@ -34,7 +36,9 @@ public class DecisionFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                getActivity().getFragmentManager().beginTransaction().replace(R.id.process_container, new DistillationFragment()).commit();
+                MainActivity activity = (MainActivity)getActivity();
+                activity.setCurrentFragment(new DistillationFragment());
+                activity.getFragmentManager().beginTransaction().replace(R.id.main_container, activity.getCurrentFragment()).commit();
             }
         });
 

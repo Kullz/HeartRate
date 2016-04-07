@@ -27,7 +27,9 @@ public class ThankFragment extends Fragment{
             @Override
             public void onClick(View v) {
 
-               // getActivity().getFragmentManager().beginTransaction().replace(R.id.process_container, new CreditsFragment()).commit();
+                MainActivity activity = (MainActivity)getActivity();
+                activity.setCurrentFragment(new CreditsFragment());
+                activity.getFragmentManager().beginTransaction().replace(R.id.main_container, activity.getCurrentFragment()).commit();
             }
         });
 

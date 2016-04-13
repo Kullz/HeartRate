@@ -9,7 +9,11 @@ import android.os.Bundle;
 public class MainActivity extends FragmentActivity {
 
     private FragmentManager currentManager;
-    public static Fragment currentFragment = new HomeFragment();
+    private static Fragment currentFragment = new HomeFragment();
+    private WiFiSocketTask connection;
+    private BeatsData beats;
+    private String connectionStatus;
+
     public MainActivity mMainActivity = this;
 
     @Override
@@ -49,5 +53,29 @@ public class MainActivity extends FragmentActivity {
             finish();
             System.exit(0);
         }
+    }
+
+    public WiFiSocketTask getConnection() {
+        return connection;
+    }
+
+    public void setConnection(WiFiSocketTask connection) {
+        this.connection = connection;
+    }
+
+    public BeatsData getBeats() {
+        return beats;
+    }
+
+    public void setBeats(BeatsData beats) {
+        this.beats = beats;
+    }
+
+    public String getConnectionStatus() {
+        return connectionStatus;
+    }
+
+    public void setConnectionStatus(String connectionStatus) {
+        this.connectionStatus = connectionStatus;
     }
 }

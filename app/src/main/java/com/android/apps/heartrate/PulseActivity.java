@@ -108,10 +108,11 @@ public class PulseActivity extends Activity{
                     startActivity(i);
                     finish();
                 }else {
-                    Toast.makeText(PulseActivity.this, "Saved beats: " + getBeats(), Toast.LENGTH_LONG).show();
-                    Intent processing = new Intent(PulseActivity.this, MainActivity.class);
-                    processing.putExtra("beats", getBeats());
-                    startActivity(processing);
+                    Toast.makeText(PulseActivity.this, "Saved beats: " + beatsAvg, Toast.LENGTH_LONG).show();
+                    BeatsData.beats = beatsAvg;
+//                    Intent processing = new Intent(PulseActivity.this, MainActivity.class);
+//                    processing.putExtra("beats", getBeats());
+//                    startActivity(processing);
                     finish();
                 }
             }
@@ -165,7 +166,7 @@ public class PulseActivity extends Activity{
         camera = null;
     }
 
-    private static PreviewCallback previewCallback = new PreviewCallback() {
+    private  PreviewCallback previewCallback = new PreviewCallback() {
 
         /**
          * {@inheritDoc}
@@ -246,7 +247,7 @@ public class PulseActivity extends Activity{
                     }
                 }
                 beatsAvg = (beatsArrayAvg / beatsArrayCnt);
-
+                Toast.makeText(PulseActivity.this, "Current rate: " + beatsAvg, Toast.LENGTH_SHORT).show();
                 pulsation.setDuration(60000 / beatsArrayAvg);
                 heart.startAnimation(pulsation);
 
@@ -257,7 +258,7 @@ public class PulseActivity extends Activity{
         }
     };
 
-    private static SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
+    private SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
 
         /**
          * {@inheritDoc}

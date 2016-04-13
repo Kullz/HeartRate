@@ -12,17 +12,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <ImageView
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src = "@drawable/thank_up_text"
             android:layout_weight="1"/>
         <ImageButton
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/arrow_distilling"
-            android:layout_gravity="center_horizontal"
             android:id="@+id/arrow_thank"/>
         <ImageView
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src = "@drawable/distilling_text_down"

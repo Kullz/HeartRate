@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 
 public class DecisionFragment extends Fragment {
 
     private ImageButton brainButton;
     private ImageButton distillButton;
+    private MainActivity hostActivity;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -21,12 +23,14 @@ public class DecisionFragment extends Fragment {
 
         brainButton = (ImageButton) currentLayout.findViewById(R.id.brain_button);
         distillButton = (ImageButton) currentLayout.findViewById(R.id.distillation_button);
+        hostActivity = (MainActivity) getActivity();
+
 
         brainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).setCurrentFragment(new ThankFragment());
-                Intent i = new Intent(getActivity(), PulseActivity.class);
+                hostActivity.setCurrentFragment(new ThankFragment());
+                Intent i = new Intent(hostActivity, PulseActivity.class);
                 i.putExtra("marker", true);
                 startActivity(i);
             }
@@ -36,9 +40,8 @@ public class DecisionFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                MainActivity activity = (MainActivity)getActivity();
-                activity.setCurrentFragment(new DistillationFragment());
-                activity.getFragmentManager().beginTransaction().replace(R.id.main_container, activity.getCurrentFragment()).commit();
+                hostActivity.setCurrentFragment(new DistillationFragment());
+                hostActivity.getFragmentManager().beginTransaction().replace(R.id.main_container, hostActivity.getCurrentFragment()).commit();
             }
         });
 

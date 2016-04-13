@@ -2,17 +2,10 @@ package com.android.apps.heartrate;
 
 public class BeatsData {
 
-    private int mBeats;
+    public static int beats;
 
     public BeatsData(int beats){
-        mBeats = beats;
+        beats = beats;
     }
 
-    public int getBeats() {
-        return mBeats;
-    }
-
-    public void setBeats(int beats) {
-        mBeats = beats;
-    }
 }

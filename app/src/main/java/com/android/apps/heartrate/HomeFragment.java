@@ -21,19 +21,14 @@ public class HomeFragment extends Fragment {
 
         View homeView = inflater.inflate(R.layout.fragment_home, container, false);
         host = (MainActivity) getActivity();
-        
+
         arrowButton = (ImageButton) homeView.findViewById(R.id.home_arrow_button);
         settings = (ImageButton) homeView.findViewById(R.id.settings);
 
         arrowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(host.getConnection() == null){
-                    host.setConnectionStatus("No connection");
-                }else{
-                    host.setConnectionStatus("Ok");
-                }
-                Toast.makeText(host, host.getConnectionStatus(), Toast.LENGTH_SHORT).show();
+
                 host.getFragmentManager().beginTransaction().replace(R.id.main_container, new InstructionFragment()).commit();
             }
         });

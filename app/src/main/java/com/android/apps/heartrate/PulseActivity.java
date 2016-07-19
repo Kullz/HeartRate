@@ -92,12 +92,15 @@ public class PulseActivity extends Activity{
 
         pulsation = AnimationUtils.loadAnimation(this, R.anim.pulsation);
 
-
-        AlphaAnimation arrowbutton = new AlphaAnimation(0.0f, 1.0f);
-        arrowbutton.setStartOffset(10000);
-        arrowbutton.setDuration(5000);
-        next.startAnimation(arrowbutton);
-
+        if (BeatsData.beats != 0){
+            pulsation.setDuration(60000 / BeatsData.beats);
+            heart.startAnimation(pulsation);
+        }else {
+            AlphaAnimation arrowbutton = new AlphaAnimation(0.0f, 1.0f);
+            arrowbutton.setStartOffset(10000);
+            arrowbutton.setDuration(5000);
+            next.startAnimation(arrowbutton);
+        }
 
 
         next.setOnClickListener(new View.OnClickListener() {

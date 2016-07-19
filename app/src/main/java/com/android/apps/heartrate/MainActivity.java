@@ -2,17 +2,30 @@ package com.android.apps.heartrate;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends FragmentActivity {
 
     private FragmentManager currentManager;
     private static Fragment currentFragment = new HomeFragment();
-    private WiFiSocketTask connection;
     private BeatsData beats;
-    private String connectionStatus;
+
 
     public MainActivity mMainActivity = this;
 
@@ -46,7 +59,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(currentFragment instanceof DecisionFragment) {
+        if(currentFragment instanceof TextData1) {
             currentManager.beginTransaction().replace(R.id.main_container, currentFragment).commit();
         }else if(currentFragment instanceof CreditsFragment){
 
@@ -55,27 +68,11 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    public WiFiSocketTask getConnection() {
-        return connection;
-    }
-
-    public void setConnection(WiFiSocketTask connection) {
-        this.connection = connection;
-    }
-
     public BeatsData getBeats() {
         return beats;
     }
 
     public void setBeats(BeatsData beats) {
         this.beats = beats;
-    }
-
-    public String getConnectionStatus() {
-        return connectionStatus;
-    }
-
-    public void setConnectionStatus(String connectionStatus) {
-        this.connectionStatus = connectionStatus;
     }
 }

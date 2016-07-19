@@ -1,26 +1,19 @@
 package com.android.apps.heartrate;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
-public class DistillationFragment extends Fragment {
+public class TextData2 extends Fragment {
+
 
     private ImageButton arrow;
 
@@ -29,7 +22,7 @@ public class DistillationFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_distillation, container, false);
+        View view = inflater.inflate(R.layout.fragment_text_data2, container, false);
         MainActivity host = (MainActivity) getActivity();
 
         arrow = (ImageButton)view.findViewById(R.id.distilling_arrow);
@@ -43,7 +36,7 @@ public class DistillationFragment extends Fragment {
             public void onClick(View v) {
 
                 MainActivity activity = (MainActivity)getActivity();
-                activity.setCurrentFragment(new ThankFragment());
+                activity.setCurrentFragment(new DecisionFragment());
                 activity.getFragmentManager().beginTransaction().replace(R.id.main_container, activity.getCurrentFragment()).commit();
             }
         });

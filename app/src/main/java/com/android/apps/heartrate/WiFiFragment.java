@@ -40,35 +40,13 @@ public class WiFiFragment extends Fragment {
 
         buttonConnect.setOnClickListener(new View.OnClickListener() {
 
-            String status = "";
             @Override
-            public void onClick(View v) {
-                if (currentActivity.getConnection() != null) {
-                    status = "Already connected!";
-                    setStatus("Already connected!");
-                    return;
-                }
-
-                try {
-                    // Get the remote host from the UI and start the thread
-                    String host = editTextAddress.getText().toString();
-                    int port = Integer.parseInt(editTextPort.getText().toString());
-
-                    // Start the asyncronous task thread
-                    setStatus("Attempting to connect...");
-                    status = "Attempting to connect...";
-                    currentActivity.setConnection(new WiFiSocketTask(host, port));
-                    currentActivity.getConnection().execute();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    status = "Invalid address/port!";
-                    setStatus("Invalid address/port!");
-                }
-                currentActivity.getConnection().sendMessage("Check!");
-                Toast.makeText(getActivity(), status, Toast.LENGTH_SHORT).show();
-                currentActivity.getFragmentManager().beginTransaction().replace(R.id.main_container, new HomeFragment()).commit();
+            public void onClick(View view) {
+                ConnectionInfo.IP = editTextAddress.getText().toString();
+                ConnectionInfo.PORT = Integer.parseInt(editTextPort.getText().toString());
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.main_container, new HomeFragment()).commit();
             }
+
         });
 
         return wifiView;

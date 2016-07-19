@@ -24,7 +24,7 @@ public class InstructionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), PulseActivity.class);
-                ((MainActivity)getActivity()).setCurrentFragment(new DecisionFragment());
+                ((MainActivity)getActivity()).setCurrentFragment(new TextData1());
                 startActivity(i);
             }
         });
